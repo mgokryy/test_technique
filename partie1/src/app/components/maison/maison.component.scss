@@ -1,0 +1,27 @@
+.renderer {
+  width: 100%;
+  height: 100vh;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
+.controls button {
+  margin-right: 5px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background: #f0f0f0;
+}
