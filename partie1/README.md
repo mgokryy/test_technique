@@ -6,7 +6,7 @@ L'objectif de cette partie était de développer une application Angular afficha
 
 Avant de lancer le projet, l’utilisateur doit avoir :
 nodejs
-installer Angular CLI si besoin
+Installer Angular CLI si besoin
 
 ```bash
 npm install -g @angular/cli
@@ -38,7 +38,7 @@ ng serve
 ## Structure de mon projet  
 
 Mon projet est divisé en plusieurs parties:  
--le dossier services contenant tous les services au même endroit ( chacun des services permetteant de creer un élément de la maison)  
+-le dossier services contenant tous les services au même endroit ( chacun des services permettant de créer un élément de la maison)  
 -le dossier components qui me sert à gérer l’interface, la scène et les boutons  
 
 ## Utilisation
@@ -50,5 +50,5 @@ Une fois le serveur lancé avec `ng serve` :
   -Les murs  
   -Le toit  
   -La porte  
-  -La fenetre  
+  -La fenêtre  
   -Ou la maison complète  
