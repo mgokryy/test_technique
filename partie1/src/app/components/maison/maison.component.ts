@@ -58,10 +58,8 @@ export class MaisonComponent implements OnInit, AfterViewInit {
 
   constructor(
     private solService: SolService,
-    private murService: MurService,
     private levelService: LevelService,
     private houseService: HouseService,
-    private toitService: ToitService
   ) {}
 
   ngOnInit(): void {}
