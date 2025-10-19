@@ -3,53 +3,109 @@ import * as THREE from 'three';
 import { PorteService } from './porte.service';
 import { FenetreService } from './fenetre.service';
 
+export interface DoorParams {
+  width: number;
+  height: number;
+  depth: number;
+  color: number;
+  position: THREE.Vector3;
+}
+
+export interface WindowParams {
+  width: number;
+  height: number;
+  depth: number;
+  color: number;
+  position: THREE.Vector3;
+}
+
+export interface MurParams {
+  width: number;
+  height: number;
+  depth: number;
+  color?: number;
+  position: THREE.Vector3;
+  rotationY?: number;
+  doors?: DoorParams[];
+  windows?: WindowParams[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class MurService {
-    constructor(private porteService: PorteService, private fenetreService: FenetreService) {}
-    createMurs(): THREE.Object3D[] {
-        const murs: THREE.Object3D[] = [];
-        murs.push(this.createMurAvant());
-        murs.push(this.createMurDroit());
-        murs.push(this.createMurArriere());
-        murs.push(this.createMurGauche());
-        return murs;
+  constructor(
+    private porteService: PorteService,
+    private fenetreService: FenetreService
+  ) {}
+
+  createMur(params: MurParams): THREE.Group {
+    const {
+      width,
+      height,
+      depth,
+      color = 0xffffff,
+      position,
+      rotationY,
+      doors = [],
+      windows = []
+    } = params;
+
+    const shape = new THREE.Shape();
+    shape.moveTo(-width / 2, -height / 2);
+    shape.lineTo(width / 2, -height / 2);
+    shape.lineTo(width / 2, height / 2);
+    shape.lineTo(-width / 2, height / 2);
+    shape.lineTo(-width / 2, -height / 2);
+
+    const bottomEdge = -height / 2;
+    const holes = [...doors, ...windows];
+
+    for (const opening of holes) {
+      const { width: ow, height: oh, position: pos } = opening;
+
+      const x0 = pos.x - ow / 2;
+      let y0 = pos.y - oh / 2;
+
+      if (Math.abs(y0 - bottomEdge) < 0.02) {
+        y0 = bottomEdge + 0.02;
+      }
+
+      const hole = new THREE.Path();
+      hole.moveTo(x0, y0);
+      hole.lineTo(x0 + ow, y0);
+      hole.lineTo(x0 + ow, y0 + oh);
+      hole.lineTo(x0, y0 + oh);
+      hole.lineTo(x0, y0);
+      shape.holes.push(hole);
     }
 
-    createMurAvant(): THREE.Group {
-        const geometry = new THREE.BoxGeometry(10, 3, 0.2);
-        const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        const murAvant = new THREE.Mesh(geometry, material);
-        murAvant.position.set(5, 1.5, 0.1); 
-        const porte = this.porteService.createPorte();
-        const fenetre = this.fenetreService.createFenetre();
-        const murAvantGroup = new THREE.Group();
-        murAvantGroup.add(murAvant, porte, fenetre);
-        return murAvantGroup;
+    const extrudeSettings = { depth, bevelEnabled: false };
+    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+
+    geometry.translate(0, 0, -depth / 2);
+
+    const material = new THREE.MeshStandardMaterial({ color });
+    const mur = new THREE.Mesh(geometry, material);
+    mur.castShadow = true;
+    mur.receiveShadow = true;
+
+    const group = new THREE.Group();
+    group.add(mur);
+
+    for (const d of doors) {
+      const porte = this.porteService.createPorte(d.width, d.height, d.depth, d.color);
+      porte.position.copy(d.position);
+      group.add(porte);
     }
 
-    createMurDroit(): THREE.Mesh {
-        const geometry = new THREE.BoxGeometry(8, 3, 0.2);
-        const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        const murDroit = new THREE.Mesh(geometry, material);
-        murDroit.position.set(10, 1.5, 4); 
-        murDroit.rotation.y = THREE.MathUtils.degToRad(90);
-        return murDroit;
+    for (const w of windows) {
+      const fenetre = this.fenetreService.createFenetre(w.width, w.height, w.depth, w.color);
+      fenetre.position.copy(w.position);
+      group.add(fenetre);
     }
-    createMurArriere(): THREE.Mesh {
-        const geometry = new THREE.BoxGeometry(10, 3, 0.2);
-        const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        const murArriere = new THREE.Mesh(geometry, material);
-        murArriere.position.set(5, 1.5, 7.9); 
-        murArriere.rotation.y = THREE.MathUtils.degToRad(180);
-        return murArriere;
-        
-    }
-    createMurGauche(): THREE.Mesh {
-        const geometry = new THREE.BoxGeometry(8, 3, 0.2);
-        const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        const murGauche = new THREE.Mesh(geometry, material);
-        murGauche.position.set(0, 1.5, 4); 
-        murGauche.rotation.y = THREE.MathUtils.degToRad(-90);
-        return murGauche;
-    }
+
+    group.position.copy(position);
+    if (rotationY) group.rotation.y = rotationY;
+
+    return group;
+  }
 }

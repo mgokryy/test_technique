@@ -47,8 +47,5 @@ Une fois le serveur lancé avec `ng serve` :
 -Ouvrez le navigateur sur le lien fournit dans votre terminal  
 -Utilisez les boutons pour afficher :  
   -Le sol  
-  -Les murs  
-  -Le toit  
-  -La porte  
-  -La fenetre  
+  -Un niveau (Sol, murs fenetres et portes)  
   -Ou la maison complète  
