@@ -20,7 +20,7 @@ git clone https://github.com/mgokryy/test_technique.git
 cd test_technique/partie2
 ```
 
-2.Creer un environnement virtuel   
+2.Créer un environnement virtuel   
 
 ```bash
 python -m venv env
@@ -42,13 +42,13 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-Assurer vous d'avoir bien activé votre environnement
+Assurez vous d'avoir bien activé votre environnement
 
 ## Endpoints  
 
 1.POST /api/surface/ (public donc pas besoin d'auth)  
 Cette route sert à calculer la surface  
-Exemple de requete  
+Exemple de requête  
 
  ```bash
  {
@@ -58,7 +58,7 @@ Exemple de requete
 ```
 
 2.POST /api/register/  
-Cette route sert à creer un nouvel utilisateur  
+Cette route sert à créer un nouvel utilisateur  
 Exemple de requette
 
 ```bash
